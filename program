@@ -1,0 +1,224 @@
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.util.InputMismatchException;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+public class Mycalculator extends JFrame{
+	private JTextField txt;
+	private JButton[] myButton = new JButton[4];
+	private JButton b9,b0,bplus,bminus,bdiv,bmul,bdot, bclear,bequal;
+	
+	Font Myfont = new Font("Arial",Font.BOLD, 30);
+
+
+	public Mycalculator() {
+		super("calculator");
+		setBounds(300,50,400,400);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		GUI();
+		setVisible(true);
+	}
+
+private JPanel pane11() {
+	JPanel ptext = new JPanel();
+	txt = new JTextField(13);
+	txt.setFont(Myfont);	
+	txt.setHorizontalAlignment(SwingConstants.RIGHT);
+	ptext.add(txt);
+	return ptext;
+}
+
+private JPanel pane12() {
+	JPanel bt1 =new JPanel(new GridLayout( 1, 4, 10, 0));
+	for(int i=0; i< myButton.length; i++) {
+		myButton[i] = new JButton(""+(i+1));
+		myButton[i].setFont(Myfont);
+		bt1.add(myButton[i]);
+		myButton[i].setActionCommand("" +(i+1));
+		final JButton temp = myButton[i];
+	myButton[i].addActionListener((event) -> onSubmit(temp.getText()));
+	}
+	return bt1;
+}
+
+private JPanel pane13() {
+	JPanel bt2 =new JPanel(new GridLayout(1, 4, 10,0));
+	for(int i=0; i< myButton.length;i++) {
+		myButton[i] = new JButton(" "+(i+5));
+		myButton[i].setFont(Myfont);
+		bt2.add(myButton[i]);
+		myButton[i].setActionCommand(" " +(i+5));
+		final JButton temp = myButton[i];
+		myButton[i].addActionListener((event) -> onSubmit(temp.getText()));
+	}
+	return bt2;
+}
+private JPanel pane14() {
+	JPanel bt3 = new JPanel(new GridLayout(1, 4, 10,0));
+	b9 =new JButton("9");
+	b9.setFont(Myfont);
+	b0 = new JButton("0");
+	b0.setFont(Myfont);
+	bplus = new JButton("+");
+	bplus.setFont(Myfont);
+	bminus = new JButton("-");
+	bminus.setFont(Myfont);
+	
+	b9.setActionCommand("9");
+	b0.setActionCommand("0");
+	bplus.setActionCommand("plus");
+	bminus.setActionCommand("minus");
+
+	b9.addActionListener( (event) -> onSubmit(b9.getText()));
+	b0.addActionListener ((event) -> onSubmit(b0.getText()));
+	bplus.addActionListener((event) -> onSubmit(bplus.getText()));
+	bminus.addActionListener((event) -> onSubmit(bminus.getText()));
+	
+	bt3.add(b9);
+	bt3.add(b0);
+	bt3.add(bplus);
+	bt3.add(bminus);
+	return bt3;
+}
+private JPanel pane15() {
+	JPanel bt4 = new JPanel(new GridLayout(1, 4, 10,0));
+	bdiv =new JButton("/");
+	bdiv.setFont(Myfont);
+	bmul = new JButton("*");
+	bmul.setFont(Myfont);
+	bdot =new JButton(".");
+	bdot.setFont(Myfont);
+	bt4.add(bdiv);
+	bt4.add(bmul);
+	bt4.add(bdot);
+	
+	bdiv.setActionCommand("div");
+	bmul.setActionCommand("mul");
+	bdot.setActionCommand("dot");
+	
+	bdiv.addActionListener((event) -> onSubmit(bdiv.getText()));
+	bmul.addActionListener((event) -> onSubmit(bmul.getText()));
+	bdot.addActionListener( (event) -> onSubmit(bdot.getText()));
+	return bt4;
+}
+private JPanel pane16() {
+	JPanel bt5 =new JPanel(new GridLayout(1,4,10,0));
+	bclear = new JButton("c");
+	bclear.setFont(Myfont);
+	bequal =new JButton("=");
+	bequal.setFont(Myfont);
+	bt5.add(bclear);
+    bt5.add(bequal);
+    
+    bclear.setActionCommand("clear");
+    bequal.setActionCommand("equal");
+    
+    bclear.addActionListener((event) -> onClear());
+    bequal.addActionListener((event) -> onEqual());
+return bt5;
+}
+
+
+	private void GUI() {
+    JPanel p1 = pane11();
+    JPanel p2 = pane12();
+    JPanel p3 = pane13();
+    JPanel p4 = pane14();
+    JPanel p5 = pane15();
+    JPanel p6 = pane16();
+	setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+	add(p1);
+	add(Box.createVerticalStrut(10));
+	add(p2);
+	add(Box.createVerticalStrut(10));
+	add(p3);
+	add(Box.createVerticalStrut(10));
+	add(p4);
+	add(Box.createVerticalStrut(10));
+	add(p5);
+	add(Box.createVerticalStrut(10));
+	add(p6);
+	add(Box.createVerticalStrut(10));
+	}
+
+	
+	public void onSubmit(String command) {
+		txt.setText(txt.getText()+command);
+		
+	}
+	
+	public void onClear() {
+		txt.setText("");
+	}
+	
+	public void onEqual() {
+		txt.setText(computeResult() + "");
+	}
+	
+	public double computeResult() {
+		String equation = txt.getText();
+		double left = Double.MIN_VALUE;
+		double right = Double.MIN_NORMAL;
+		String temp="";
+		char operator='a';
+		
+		for(char c : equation.toCharArray()) {
+			System.out.println(c + "isDigit? " + Character.isDigit(c));
+			if(Character.isDigit(c)) {
+				temp += c;
+			}
+			else{
+				try {
+					left = Double.parseDouble(temp);
+				}
+				catch(NumberFormatException e) {
+					e.printStackTrace();
+					txt.setText("Invalid input");
+				}
+				operator = c;
+				temp="";
+			}
+		}
+		try {
+			right = Double.parseDouble(temp);
+		}
+		catch(NumberFormatException e) {
+			e.printStackTrace();
+			txt.setText("Invalid input");
+		}
+		if(right!= Double.MIN_VALUE && left != Double.MIN_VALUE) {
+			switch(operator) {
+			case '+':
+				return left+right;
+			case '-':
+				return left-right;
+			case '*':
+				return left*right;
+			case '/':
+				return left/right;
+			default:
+				txt.setText("Invalid input");
+			}
+		}
+		return -1;
+		
+	}
+	
+
+	public static void main(String[] args) {
+        Mycalculator calc = new Mycalculator();
+		calc.pack();
+	}
+
+}//End of class
+
